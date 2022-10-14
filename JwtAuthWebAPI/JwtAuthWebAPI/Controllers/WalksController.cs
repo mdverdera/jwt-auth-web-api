@@ -57,13 +57,58 @@ namespace JwtAuthWebAPI.Controllers
                 RegionId = addWalkRequest.RegionId,
                 WalkDifficultyId = addWalkRequest.WalkDifficultyId,
             };
-        //Pass domain object to repository
-        walkDomain=await walkRepository.AddAsync(walkDomain);
-        //convert the Domain object back to DTO
-        var walkDTO = mapper.Map<Models.DTO.Walk>(walkDomain);
+            //Pass domain object to repository
+            walkDomain = await walkRepository.AddAsync(walkDomain);
+            //convert the Domain object back to DTO
+            var walkDTO = mapper.Map<Models.DTO.Walk>(walkDomain);
             //Send DTO response back to Client
             return CreatedAtAction(nameof(GetWalkAsync), new { id = walkDTO.Id }, walkDTO);
 
+        }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkRequest updateWalkRequest)
+        {
+            // convert DTO to Domain object
+            var walkDomain = new Models.Domain.Walk
+            {
+
+                Length = updateWalkRequest.Length,
+                Name = updateWalkRequest.Name,
+                RegionId = updateWalkRequest.RegionId,
+                WalkDifficultyId = updateWalkRequest.WalkDifficultyId,
+            };
+            //pass details to repository - get domain object in response (or null)
+            walkDomain=await walkRepository.UpdateAsync(id, walkDomain);
+
+            //handle null
+            if (walkDomain == null)
+            {
+                return NotFound();
+            }
+
+            //convert back domain to DTO
+            var walkDTO = mapper.Map<Models.DTO.Walk>(walkDomain);
+            //return Response
+
+            return Ok(walkDTO);
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteWalkAsync(Guid id) { 
+        
+            // call repository to delete walk
+            var walkDomain = await walkRepository.DeleteAsync(id);
+
+            if (walkDomain == null) {
+                return NotFound("Walk was not found");
+            }
+
+            var walkDTO = mapper.Map<Models.DTO.Walk>(walkDomain);
+
+            return Ok(walkDTO);
         }
 
     }
