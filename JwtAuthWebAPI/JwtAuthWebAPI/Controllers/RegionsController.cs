@@ -93,11 +93,11 @@ namespace JwtAuthWebAPI.Controllers
         public async Task<IActionResult> AddRegionAsync(AddRegionRequest addRegionRequest)
         {
             // Validate the request
-            var valid = ValidateAddRegionAsync(addRegionRequest);
+            //var valid = ValidateAddRegionAsync(addRegionRequest);
 
-            if (!valid) {
-                return BadRequest();
-            }
+            //if (!valid) {
+            //    return BadRequest();
+            //}
 
             // (DTO) request model to domain model
 
