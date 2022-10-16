@@ -10,11 +10,13 @@ namespace JwtAuthWebAPI.Controllers
     {
         private readonly IWalkRepository walkRepository;
         private readonly IMapper mapper;
+        private readonly IRegionRepository regionRepository;
 
-        public WalksController(IWalkRepository walkRepository, IMapper mapper)
+        public WalksController(IWalkRepository walkRepository, IMapper mapper, IRegionRepository regionRepository)
         {
             this.walkRepository = walkRepository;
             this.mapper = mapper;
+            this.regionRepository = regionRepository;
         }
 
         [HttpGet]
@@ -49,6 +51,12 @@ namespace JwtAuthWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddWalkAsync([FromBody] Models.DTO.AddWalkRequest addWalkRequest)
         {
+            //Validate incoming request
+            var valid = await ValidateAddWalkAsync(addWalkRequest);
+            if (!valid) {
+                return BadRequest(ModelState);
+            }
+
             //convert DTO to Domain object
             var walkDomain = new Models.Domain.Walk
             {
@@ -80,7 +88,7 @@ namespace JwtAuthWebAPI.Controllers
                 WalkDifficultyId = updateWalkRequest.WalkDifficultyId,
             };
             //pass details to repository - get domain object in response (or null)
-            walkDomain=await walkRepository.UpdateAsync(id, walkDomain);
+            walkDomain = await walkRepository.UpdateAsync(id, walkDomain);
 
             //handle null
             if (walkDomain == null)
@@ -97,12 +105,14 @@ namespace JwtAuthWebAPI.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteWalkAsync(Guid id) { 
-        
+        public async Task<IActionResult> DeleteWalkAsync(Guid id)
+        {
+
             // call repository to delete walk
             var walkDomain = await walkRepository.DeleteAsync(id);
 
-            if (walkDomain == null) {
+            if (walkDomain == null)
+            {
                 return NotFound("Walk was not found");
             }
 
@@ -110,6 +120,26 @@ namespace JwtAuthWebAPI.Controllers
 
             return Ok(walkDTO);
         }
+
+        #region Private Methods
+        private async Task<bool> ValidateAddWalkAsync(Models.DTO.AddWalkRequest addWalkRequest)
+        {
+
+            var region = await regionRepository.GetAsync(addWalkRequest.RegionId);
+            if (region == null)
+            {
+                ModelState.AddModelError(nameof(addWalkRequest.RegionId),
+                    $"{nameof(addWalkRequest.RegionId)} is invalid.");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        #endregion
 
     }
 }
