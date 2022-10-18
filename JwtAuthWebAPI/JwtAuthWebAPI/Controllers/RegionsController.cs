@@ -2,6 +2,7 @@
 using JwtAuthWebAPI.Models.Domain;
 using JwtAuthWebAPI.Models.DTO;
 using JwtAuthWebAPI.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -12,6 +13,7 @@ namespace JwtAuthWebAPI.Controllers
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class RegionsController : Controller
     {
         private readonly IRegionRepository regionRepository;
