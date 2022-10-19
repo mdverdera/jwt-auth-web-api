@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TokenHandler = JwtAuthWebAPI.Repositories.TokenHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<DataDbContext>(options =>
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
+builder.Services.AddScoped<ITokenHandler, TokenHandler>();
 builder.Services.AddSingleton<IUserRepository, StaticUserRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

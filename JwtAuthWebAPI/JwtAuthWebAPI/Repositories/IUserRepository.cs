@@ -1,7 +1,9 @@
-﻿namespace JwtAuthWebAPI.Repositories
+﻿using JwtAuthWebAPI.Models.Domain;
+
+namespace JwtAuthWebAPI.Repositories
 {
     public interface IUserRepository
     {
-        Task< bool> AuthenticateAsync(string username, string password);
+        Task< User> AuthenticateAsync(string username, string password);
     }
 }

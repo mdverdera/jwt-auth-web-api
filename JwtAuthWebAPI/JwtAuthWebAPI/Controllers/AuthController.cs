@@ -9,10 +9,12 @@ namespace JwtAuthWebAPI.Controllers
     public class AuthController : Controller
     {
         private readonly IUserRepository userRepository;
+        private readonly ITokenHandler tokenHandler;
 
-        public AuthController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler)
         {
             this.userRepository = userRepository;
+            this.tokenHandler = tokenHandler;
         }
 
         [HttpPost]
@@ -23,13 +25,14 @@ namespace JwtAuthWebAPI.Controllers
 
             // Check if user is authenticated
             // Check username and password
-            var isAuthenticated = await userRepository.AuthenticateAsync(
+            var user = await userRepository.AuthenticateAsync(
                 loginRequest.Username, loginRequest.Password);
 
-            if (isAuthenticated)
+            if (user != null)
             {
                 //Generate a JWT
-
+                var token = await tokenHandler.CreateTokenAsync(user);
+                return Ok(token);
             }
 
             return BadRequest("Username or Password is incorrect.");
