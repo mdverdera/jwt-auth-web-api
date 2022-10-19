@@ -13,7 +13,7 @@ namespace JwtAuthWebAPI.Repositories
         new User(){
             FirstName="Read Write", LastName="User", EmailAddress="readwrite@user.com",
             Id=Guid.NewGuid(),Username="readwrite@user.com", Password="Readwrite@user",
-            Roles=new List<string> {  "reader", "writer" }
+            Roles=new List<string> {  "test", "writer" }
         }
         };
 

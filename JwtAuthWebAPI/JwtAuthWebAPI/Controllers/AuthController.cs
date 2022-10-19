@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JwtAuthWebAPI.Controllers
 {
     [ApiController]
-    [Route("controller")]
+    [Route("[controller]")]
     public class AuthController : Controller
     {
         private readonly IUserRepository userRepository;
